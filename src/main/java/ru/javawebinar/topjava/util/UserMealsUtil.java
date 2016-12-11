@@ -40,16 +40,17 @@ public class UserMealsUtil {
                                 (cal1, cal2) -> cal1 + cal2
                         ));
 
+        /*
+        Another way to realize method
+        Map<LocalDate, Integer> caloriesByDay = mealList.stream().
+                collect(Collectors.groupingBy(meal -> (meal.getDateTime().toLocalDate()), Collectors.summingInt(UserMeal::getCalories)));
+        */
+
+
         return mealList.stream()
                 .filter(item -> TimeUtil.isBetween(item.getDateTime().toLocalTime(), startTime, endTime))
-                .map(item -> {
-                    int userMealCaloriesByDay = caloriesByDay.get(item.getDateTime().toLocalDate());
-                    boolean exceed = false;
-                    if (userMealCaloriesByDay <= caloriesPerDay) exceed = true;
-
-                    return new UserMealWithExceed(item.getDateTime(), item.getDescription(),
-                            item.getCalories(), exceed);
-                })
+                .map(item -> new UserMealWithExceed(item.getDateTime(), item.getDescription(), item.getCalories(),
+                        caloriesByDay.get(item.getDateTime().toLocalDate())>caloriesPerDay))
                 .collect(Collectors.toList());
     }
 }
