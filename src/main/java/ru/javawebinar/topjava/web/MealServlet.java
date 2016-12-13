@@ -25,17 +25,42 @@ public class MealServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
 
-        //TODO Add validation after add form
+        //TODO Add validation data from add && edit form
         int calories = Integer.parseInt(request.getParameter("calories"));
-        meals.add(new Meal(counter.getNextID(), LocalDateTime.now(), request.getParameter("description"), calories));
 
+        if (request.getParameter("id") == null || request.getParameter("id").isEmpty()) {
+            meals.add(new Meal(
+                    counter.getNextID(),
+                    LocalDateTime.now(),
+                    request.getParameter("description"),
+                    calories));
+        } else {
+            meals.update(new Meal(
+                    Integer.parseInt(request.getParameter("id")),
+                    LocalDateTime.parse(request.getParameter("dateTime")),
+                    request.getParameter("description"),
+                    calories));
+        }
         response.sendRedirect("meal");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (request.getParameter("edit") != null && !request.getParameter("edit").isEmpty()) {
+            Meal meal = meals.getByID(Integer.parseInt(request.getParameter("edit")));
+
+            if (meal != null) {
+                request.setAttribute("meal", meal);
+                request.getRequestDispatcher("/view/edit.jsp").forward(request, response);
+                return;
+            }
+
+        } else if (request.getParameter("delete") != null && !request.getParameter("delete").isEmpty()) {
+            meals.delete(Integer.parseInt(request.getParameter("delete")));
+        }
+
         List<MealWithExceed> mealsWithExceedList = MealsUtil.getAllWithExceeded(meals.list(), 2000);
 
         request.setAttribute("mealsList", mealsWithExceedList);
-        request.getRequestDispatcher("/meals.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/meals.jsp").forward(request, response);
     }
 }

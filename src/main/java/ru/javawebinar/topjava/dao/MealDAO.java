@@ -18,6 +18,7 @@ public interface MealDAO {
     * READ
     */
     List<Meal> list();
+    Meal getByID(int id);
 
     /*
     * UPDATE

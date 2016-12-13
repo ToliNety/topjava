@@ -27,6 +27,8 @@
             <th>Date time</th>
             <th>Description</th>
             <th>Calories</th>
+            <th>Edit</th>
+            <th>Delete</th>
         </tr>
         <tbody>
         <c:forEach items="${mealsList}" var="meal">
@@ -38,6 +40,8 @@
             <td>${fn:replace(meal.dateTime, 'T', ' ')}</td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
+            <td><a href="<c:url value='meal?edit=${meal.id}'/>">Edit</a></td>
+            <td><a href="<c:url value='meal?delete=${meal.id}'/>">Delete</a></td>
         </tr>
         </c:forEach>
         <tbody>
