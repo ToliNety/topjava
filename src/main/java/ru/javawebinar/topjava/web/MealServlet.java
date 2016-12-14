@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.web;
 
-import ru.javawebinar.topjava.dao.Counter;
 import ru.javawebinar.topjava.dao.MealDAO;
 import ru.javawebinar.topjava.dao.MealLocalDB;
 import ru.javawebinar.topjava.model.Meal;
@@ -20,7 +19,6 @@ import java.util.List;
  */
 public class MealServlet extends HttpServlet {
     private static MealDAO meals = MealLocalDB.getInstance();
-    private static Counter counter = Counter.getCounter();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -29,11 +27,9 @@ public class MealServlet extends HttpServlet {
         int calories = Integer.parseInt(request.getParameter("calories"));
 
         if (request.getParameter("id") == null || request.getParameter("id").isEmpty()) {
-            meals.add(new Meal(
-                    counter.getNextID(),
-                    LocalDateTime.now(),
+            meals.add(LocalDateTime.now(),
                     request.getParameter("description"),
-                    calories));
+                    calories);
         } else {
             meals.update(new Meal(
                     Integer.parseInt(request.getParameter("id")),
@@ -45,17 +41,19 @@ public class MealServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (request.getParameter("edit") != null && !request.getParameter("edit").isEmpty()) {
-            Meal meal = meals.getByID(Integer.parseInt(request.getParameter("edit")));
-
-            if (meal != null) {
-                request.setAttribute("meal", meal);
-                request.getRequestDispatcher("/view/edit.jsp").forward(request, response);
+        if (request.getParameter("action") != null) switch (request.getParameter("action")) {
+            case "edit":
+                Meal meal = meals.getByID(Integer.parseInt(request.getParameter("id")));
+                if (meal != null) {
+                    request.setAttribute("meal", meal);
+                    request.getRequestDispatcher("/view/edit.jsp").forward(request, response);
+                    return;
+                }
+                break;
+            case "delete":
+                meals.delete(Integer.parseInt(request.getParameter("id")));
+                response.sendRedirect("meal");
                 return;
-            }
-
-        } else if (request.getParameter("delete") != null && !request.getParameter("delete").isEmpty()) {
-            meals.delete(Integer.parseInt(request.getParameter("delete")));
         }
 
         List<MealWithExceed> mealsWithExceedList = MealsUtil.getAllWithExceeded(meals.list(), 2000);

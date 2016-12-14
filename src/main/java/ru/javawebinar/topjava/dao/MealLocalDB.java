@@ -7,22 +7,24 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by tolikswx on 12.12.2016.
  */
 public class MealLocalDB implements MealDAO {
-    private static Counter counter = Counter.getCounter();
-    private static final List<Meal> MEAL_LIST = Collections.synchronizedList(new ArrayList<>());
+    private static AtomicInteger counter = new AtomicInteger();
+    private static final List<Meal> MEAL_LIST = new CopyOnWriteArrayList<>();
     private static final MealLocalDB MEAL_LOCAL_DB = new MealLocalDB();
 
     private MealLocalDB() {
-        MEAL_LIST.add(new Meal(counter.getNextID(), LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500));
-        MEAL_LIST.add(new Meal(counter.getNextID(), LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000));
-        MEAL_LIST.add(new Meal(counter.getNextID(), LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500));
-        MEAL_LIST.add(new Meal(counter.getNextID(), LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000));
-        MEAL_LIST.add(new Meal(counter.getNextID(), LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500));
-        MEAL_LIST.add(new Meal(counter.getNextID(), LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510));
+        MEAL_LIST.add(new Meal(counter.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500));
+        MEAL_LIST.add(new Meal(counter.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000));
+        MEAL_LIST.add(new Meal(counter.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500));
+        MEAL_LIST.add(new Meal(counter.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000));
+        MEAL_LIST.add(new Meal(counter.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500));
+        MEAL_LIST.add(new Meal(counter.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510));
     }
 
     public static MealLocalDB getInstance() {
@@ -30,8 +32,8 @@ public class MealLocalDB implements MealDAO {
     }
 
     @Override
-    public void add(Meal meal) {
-        MEAL_LIST.add(meal);
+    public void add(LocalDateTime dateTime, String description, int calories) {
+        MEAL_LIST.add(new Meal(counter.incrementAndGet(), dateTime, description, calories));
     }
 
     @Override
@@ -59,6 +61,6 @@ public class MealLocalDB implements MealDAO {
 
     @Override
     public void delete(int id) {
-        MEAL_LIST.remove(getIndexByMealID(id));
+        MEAL_LIST.remove(getByID(id));
     }
 }

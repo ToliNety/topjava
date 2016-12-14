@@ -40,8 +40,8 @@
             <td>${fn:replace(meal.dateTime, 'T', ' ')}</td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
-            <td><a href="<c:url value='meal?edit=${meal.id}'/>">Edit</a></td>
-            <td><a href="<c:url value='meal?delete=${meal.id}'/>">Delete</a></td>
+            <td><a href="<c:url value='meal?action=edit&id=${meal.id}'/>">Edit</a></td>
+            <td><a href="<c:url value='meal?action=delete&id=${meal.id}'/>">Delete</a></td>
         </tr>
         </c:forEach>
         <tbody>

@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.dao;
 import ru.javawebinar.topjava.model.Meal;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ public interface MealDAO {
     /*
     * CREATE
     */
-    void add(Meal meal);
+    void add(LocalDateTime dateTime, String description, int calories);
 
     /*
     * READ
