@@ -13,7 +13,7 @@ public interface MealDAO {
     /*
     * CREATE
     */
-    void add(LocalDateTime dateTime, String description, int calories);
+    void add(Meal meal);
 
     /*
     * READ

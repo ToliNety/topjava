@@ -1,7 +1,7 @@
 package ru.javawebinar.topjava.util;
 
 import ru.javawebinar.topjava.dao.MealDAO;
-import ru.javawebinar.topjava.dao.MealLocalDB;
+import ru.javawebinar.topjava.dao.MealInMemory;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealWithExceed;
 
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  * 31.05.2015.
  */
 public class MealsUtil {
-    private static MealDAO meals = MealLocalDB.getInstance();
+    private static MealDAO meals = MealInMemory.getInstance();
 
     public static void main(String[] args) {
         List<MealWithExceed> mealsWithExceeded = getFilteredWithExceeded(meals.list(), LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
@@ -53,16 +53,5 @@ public class MealsUtil {
 
     public static MealWithExceed createWithExceed(Meal meal, boolean exceeded) {
         return new MealWithExceed(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), exceeded);
-    }
-
-    public static List<MealWithExceed> getAllWithExceeded(List<Meal> meals, int caloriesPerDay) {
-        Map<LocalDate, Integer> caloriesSumByDate = meals.stream()
-                .collect(
-                        Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories))
-                );
-
-        return meals.stream()
-                .map(meal -> createWithExceed(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
-                .collect(Collectors.toList());
     }
 }
