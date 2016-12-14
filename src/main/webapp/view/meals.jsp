@@ -32,10 +32,7 @@
         </tr>
         <tbody>
         <c:forEach items="${mealsList}" var="meal">
-        <c:if test="${meal.exceed}">
-        <tr bgcolor="red"></c:if>
-            <c:if test="${!meal.exceed}">
-        <tr bgcolor="green"></c:if>
+        <tr bgcolor=<c:out value="${meal.exceed ? 'red' : 'green'}"/> >
             <td>${meal.id}</td>
             <td>${fn:replace(meal.dateTime, 'T', ' ')}</td>
             <td>${meal.description}</td>
