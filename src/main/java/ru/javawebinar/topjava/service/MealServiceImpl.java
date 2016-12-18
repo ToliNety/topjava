@@ -4,10 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import java.util.Comparator;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
+import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
 /**
  * GKislin
@@ -19,24 +23,24 @@ public class MealServiceImpl implements MealService {
     private MealRepository repository;
 
     @Override
-    public Meal save(Meal meal, Integer userId) {
-        return repository.save(meal, userId);
+    public Meal save(Meal meal, Integer userId) throws NotFoundException {
+        return checkNotFound(repository.save(meal, userId), "meal = " + meal + ", userID = " + userId);
     }
 
     @Override
-    public boolean delete(int id, Integer userId) {
-        return repository.delete(id, userId);
+    public void delete(int id, Integer userId) throws NotFoundException {
+        checkNotFoundWithId(repository.delete(id, userId), id);
     }
 
     @Override
-    public Meal get(int id, Integer userId) {
-        return repository.get(id, userId);
+    public Meal get(int id, Integer userId) throws NotFoundException {
+        return checkNotFoundWithId(repository.get(id, userId), id);
     }
 
     @Override
-    public List<Meal> getAll(Integer userId) {
+    public List<Meal> getAll(LocalDate startDate, LocalDate endDate, Integer userId) {
 
-        return repository.getAll(userId).stream()
+        return repository.getAll(startDate, endDate, userId).stream()
                 .sorted((meal1, meal2) -> meal2.getDateTime().compareTo(meal1.getDateTime()))
                 .collect(Collectors.toList()
                 );

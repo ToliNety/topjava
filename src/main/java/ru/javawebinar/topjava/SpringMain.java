@@ -3,13 +3,15 @@ package ru.javawebinar.topjava;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.Role;
-import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.service.MealService;
-import ru.javawebinar.topjava.web.user.AdminRestController;
+import ru.javawebinar.topjava.to.MealWithExceed;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
+import ru.javawebinar.topjava.web.meal.MealRestController;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,34 +29,62 @@ public class SpringMain {
             MealRepository mealRepository = appCtx.getBean(MealRepository.class);
             mealRepository.initData();
 
-            testMealService(appCtx.getBean(MealService.class));
+            testMealController(appCtx.getBean(MealRestController.class));
 
             /*AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
             adminUserController.create(new User(1, "userName", "email", "password", Role.ROLE_ADMIN));*/
         }
     }
 
-    private static void testMealService(MealService mealService) {
-        //List all for diff users
-        List<Meal> mealList = mealService.getAll(1);
+    private static void testMealController(MealRestController mealController) {
+        //List all for diff users and Date/Time
+        List<MealWithExceed> mealList = mealController.getAll(null, LocalTime.of(13,00), LocalTime.of(21,00), null);
         mealList.forEach(System.out::println);
-        mealList = mealService.getAll(2);
+        mealList = mealController.getAll(LocalDate.of(2015, Month.MAY, 31), LocalTime.of(13,00), LocalTime.of(21,00), null);
         mealList.forEach(System.out::println);
-        mealList = mealService.getAll(4);
+        AuthorizedUser.setID(2);
+        mealList = mealController.getAll();
+        mealList.forEach(System.out::println);
+        AuthorizedUser.setID(4);
+        mealList = mealController.getAll(LocalDate.of(2015, Month.MAY, 30),null, null, LocalDate.of(2015, Month.MAY, 30));
         mealList.forEach(System.out::println);
 
-        //Edit meals for diff users
-        mealService.save(new Meal(3, LocalDateTime.now(), "after edit", 1500), 2);
-        mealService.save(new Meal(3, LocalDateTime.now(), "after edit", 1500), 1);
-        mealService.save(new Meal(4, LocalDateTime.now(), "after edit by admin", 2500), 4);
+        //Edit meals by diff users
+        AuthorizedUser.setID(2);
+        try {
+            mealController.save(new Meal(3, LocalDateTime.now(), "after edit", 1500));
+        } catch (NotFoundException ex) {
+            System.out.println("NotFoundException: " + ex.getMessage());
+        }
+        AuthorizedUser.setID(1);
+        mealController.save(new Meal(3, LocalDateTime.now(), "after edit", 1500));
+        AuthorizedUser.setID(4);
+        mealController.save(new Meal(4, LocalDateTime.now(), "after edit by admin", 2500));
 
-        //Delete meals for diff users
-        mealService.delete(5, 2);
-        mealService.delete(5, 1);
-        mealService.delete(5, 4);
-        mealService.delete(6, 6);
+        //Delete meals from diff users
+        AuthorizedUser.setID(2);
+        try {
+            mealController.delete(5);
+        } catch (NotFoundException ex) {
+            System.out.println("NotFoundException: " + ex.getMessage());
+        }
+        AuthorizedUser.setID(1);
+        mealController.delete(5);
+        AuthorizedUser.setID(4);
+        try {
+            mealController.delete(5);
+        } catch (NotFoundException ex) {
+            System.out.println("NotFoundException: " + ex.getMessage());
+        }
+        AuthorizedUser.setID(6);
+        try {
+            mealController.delete(6);
+        } catch (NotFoundException ex) {
+            System.out.println("NotFoundException: " + ex.getMessage());
+        }
 
-        mealList = mealService.getAll(4);
+        AuthorizedUser.setID(4);
+        mealList = mealController.getAll();
         mealList.forEach(System.out::println);
     }
 }

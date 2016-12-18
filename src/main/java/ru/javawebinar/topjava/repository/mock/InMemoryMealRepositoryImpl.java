@@ -9,6 +9,7 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.repository.UserRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -40,9 +41,7 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
 
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
-        }
-
-        else if (!isAccessApproved(userId, repository.get(meal.getId())))
+        } else if (!isAccessApproved(userId, repository.get(meal.getId())))
             return null;
 
         meal.setUserId(userId);
@@ -76,14 +75,15 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     }
 
     @Override
-    public List<Meal> getAll(Integer userId) {
+    public List<Meal> getAll(LocalDate startDate, LocalDate endDate, Integer userId) {
         if (isUserNotExists(userId)) return Collections.emptyList();
 
         LOG.info("getAll userID = " + userId);
-        if (isAdmin(userId)) return new ArrayList<>(repository.values());
 
         return repository.values().stream()
-                .filter(meal -> Objects.equals(meal.getUserId(), userId))
+                .filter(meal -> isAdmin(userId) || Objects.equals(meal.getUserId(), userId))
+                .filter(meal -> startDate == null || (meal.getDate().compareTo(startDate) >= 0))
+                .filter(meal -> endDate == null || (meal.getDate().compareTo(endDate) <= 0))
                 .collect(Collectors.toList());
     }
 
