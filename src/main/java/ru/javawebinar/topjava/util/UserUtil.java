@@ -14,9 +14,9 @@ import java.util.stream.Stream;
  */
 public class UserUtil {
     public static final List<User> USERS = Arrays.asList(
-            new User(null, "user1", "user1@mail.ru", "pwd1", 2000, true, Stream.of(Role.ROLE_USER).collect(Collectors.toSet())),
-            new User(null, "user2", "user2@mail.ru", "pwd2", 2200, true, Stream.of(Role.ROLE_USER).collect(Collectors.toSet())),
-            new User(null, "user3", "user3@mail.ru", "pwd3", 1800, true, Stream.of(Role.ROLE_USER).collect(Collectors.toSet())),
-            new User(null, "admin", "admin@mail.ru", "admin", 2000, true, Stream.of(Role.ROLE_ADMIN).collect(Collectors.toSet()))
+            new User(null, "user1", "user1@mail.ru", "pwd1", Role.ROLE_USER),
+            new User(null, "user2", "user2@mail.ru", "pwd2", Role.ROLE_USER),
+            new User(null, "user3", "user3@mail.ru", "pwd3", Role.ROLE_USER),
+            new User(null, "admin", "admin@mail.ru", "admin", Role.ROLE_ADMIN)
     );
 }

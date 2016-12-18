@@ -26,17 +26,18 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
 
     {
         UserUtil.USERS.forEach(this::save);
+        LOG.info("Data initialization for UserRepository");
     }
 
     @Override
     public boolean delete(int id) {
-        LOG.info("delete " + id);
+        LOG.info("delete id = " + id);
         return repository.remove(id) != null;
     }
 
     @Override
     public User save(User user) {
-        LOG.info("save " + user);
+        LOG.info("save user = " + user);
         if (user.isNew()) user.setId(counter.incrementAndGet());
         repository.put(user.getId(), user);
         return user;
@@ -44,7 +45,6 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
 
     @Override
     public User get(int id) {
-        LOG.info("get " + id);
         return repository.get(id);
     }
 

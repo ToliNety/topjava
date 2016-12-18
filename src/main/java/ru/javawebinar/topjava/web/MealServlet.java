@@ -29,12 +29,12 @@ public class MealServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        repository = new InMemoryMealRepositoryImpl();
+/*        repository = new InMemoryMealRepositoryImpl();*/
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
+/*        request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
 
         Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
@@ -44,12 +44,12 @@ public class MealServlet extends HttpServlet {
 
         LOG.info(meal.isNew() ? "Create {}" : "Update {}", meal);
         repository.save(meal);
-        response.sendRedirect("meals");
+        response.sendRedirect("meals");*/
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String action = request.getParameter("action");
+/*        String action = request.getParameter("action");
 
         if (action == null) {
             LOG.info("getAll");
@@ -69,7 +69,7 @@ public class MealServlet extends HttpServlet {
                     repository.get(getId(request));
             request.setAttribute("meal", meal);
             request.getRequestDispatcher("meal.jsp").forward(request, response);
-        }
+        }*/
     }
 
     private int getId(HttpServletRequest request) {

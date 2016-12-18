@@ -84,6 +84,10 @@ public class User extends NamedEntity {
         return password;
     }
 
+    public boolean isAdmin (){
+        return getRoles().contains(Role.ROLE_ADMIN);
+    }
+
     @Override
     public String toString() {
         return "User (" +
