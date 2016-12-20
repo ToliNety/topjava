@@ -52,7 +52,7 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     public List<User> getAll() {
         LOG.info("getAll");
         List<User> users = new ArrayList<>(repository.values());
-        users.sort(Comparator.comparing(NamedEntity::getName));
+        users.sort(Comparator.comparing(User::getName));
         return users;
     }
 

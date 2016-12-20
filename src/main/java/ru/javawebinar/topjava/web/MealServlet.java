@@ -41,10 +41,6 @@ public class MealServlet extends HttpServlet {
         appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
         LOG.info("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
 
-        //init data at mealRepository
-        MealRepository mealRepository = appCtx.getBean(MealRepository.class);
-        mealRepository.initData();
-
         controller = appCtx.getBean(MealRestController.class);
         userController = appCtx.getBean(AdminRestController.class);
     }

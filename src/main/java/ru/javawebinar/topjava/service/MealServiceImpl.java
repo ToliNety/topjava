@@ -39,10 +39,11 @@ public class MealServiceImpl implements MealService {
 
     @Override
     public List<Meal> getAll(LocalDate startDate, LocalDate endDate, Integer userId) {
+        return repository.getAll(startDate, endDate, userId);
+    }
 
-        return repository.getAll(startDate, endDate, userId).stream()
-                .sorted((meal1, meal2) -> meal2.getDateTime().compareTo(meal1.getDateTime()))
-                .collect(Collectors.toList()
-                );
+    @Override
+    public List<Meal> getAll(Integer userId) {
+        return repository.getAll(userId);
     }
 }

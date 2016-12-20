@@ -18,4 +18,6 @@ public interface MealService {
     Meal get(int id, Integer userId) throws NotFoundException;
 
     List<Meal> getAll(LocalDate startDate, LocalDate endDate, Integer userId);
+
+    List<Meal> getAll(Integer userId);
 }

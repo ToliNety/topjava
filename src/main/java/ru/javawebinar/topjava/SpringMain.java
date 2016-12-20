@@ -25,10 +25,6 @@ public class SpringMain {
         try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml")) {
             System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
 
-            //init data at mealRepository
-            MealRepository mealRepository = appCtx.getBean(MealRepository.class);
-            mealRepository.initData();
-
             testMealController(appCtx.getBean(MealRestController.class));
 
             /*AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
