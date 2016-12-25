@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.repository.jdbc;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -42,8 +43,8 @@ public class JdbcMealRepositoryImpl implements MealRepository {
     @Autowired
     public JdbcMealRepositoryImpl(DataSource dataSource, JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.simpleJdbcInsert = new SimpleJdbcInsert(dataSource)
-        .withTableName("meals")
-        .usingGeneratedKeyColumns("id");
+                .withTableName("meals")
+                .usingGeneratedKeyColumns("id");
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
@@ -56,15 +57,18 @@ public class JdbcMealRepositoryImpl implements MealRepository {
                 .addValue("description", meal.getDescription())
                 .addValue("calories", meal.getCalories())
                 .addValue("userId", userId);
-        if (meal.isNew()){
+
+        int result = 0;
+        if (meal.isNew()) {
             Number newID = simpleJdbcInsert.executeAndReturnKey(mapParameter);
             meal.setId(newID.intValue());
+            result = 1;
         } else {
-            namedParameterJdbcTemplate.update("UPDATE meals SET datetime=:dateTime, description=:description, " +
+            result = namedParameterJdbcTemplate.update("UPDATE meals SET datetime=:dateTime, description=:description, " +
                     "calories=:calories WHERE id=:id AND user_id=:userId", mapParameter);
         }
 
-        return meal;
+        return result == 0 ? null : meal;
     }
 
     @Override
@@ -74,7 +78,8 @@ public class JdbcMealRepositoryImpl implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        return jdbcTemplate.queryForObject("SELECT * FROM meals WHERE id=? AND user_id=?", ROW_MAPPER, id, userId);
+        return DataAccessUtils.singleResult(
+                jdbcTemplate.query("SELECT * FROM meals WHERE id=? AND user_id=?", ROW_MAPPER, id, userId));
     }
 
     @Override
