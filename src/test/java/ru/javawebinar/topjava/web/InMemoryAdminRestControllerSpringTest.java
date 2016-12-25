@@ -6,6 +6,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ru.javawebinar.topjava.UserTestData;
@@ -24,7 +26,7 @@ import static ru.javawebinar.topjava.UserTestData.USER;
  * 13.03.2015.
  */
 @ContextConfiguration({
-        "classpath:spring/spring-app.xml"
+        "classpath:spring/spring-app-test.xml"
 })
 @RunWith(SpringJUnit4ClassRunner.class)
 public class InMemoryAdminRestControllerSpringTest {
@@ -33,7 +35,6 @@ public class InMemoryAdminRestControllerSpringTest {
     private AdminRestController controller;
 
     @Autowired
-    @Qualifier( "MockUserRepository")
     private UserRepository repository;
 
     @Before
