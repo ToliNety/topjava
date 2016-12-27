@@ -61,7 +61,7 @@ public class MealServiceTest {
         service.delete(USER_MEAL_LANCH.getId(), USER_ID);
 
         MATCHER.assertCollectionEquals(
-                Arrays.asList(USER_MEAL_BREAKFAST, USER_MEAL_DINNER),
+                Arrays.asList(USER_MEAL_DINNER, USER_MEAL_BREAKFAST),
                 service.getAll(USER_ID));
     }
 
@@ -73,18 +73,18 @@ public class MealServiceTest {
     @Test
     public void testGetAll() throws Exception {
         MATCHER.assertCollectionEquals(
-                Arrays.asList(USER_MEAL_BREAKFAST, USER_MEAL_LANCH, USER_MEAL_DINNER),
+                Arrays.asList(USER_MEAL_DINNER, USER_MEAL_LANCH, USER_MEAL_BREAKFAST),
                 service.getAll(USER_ID));
     }
 
     @Test
     public void testSave() throws Exception {
-        Meal created = new Meal(null, LocalDateTime.now(), "test", 500);
+        Meal created = new Meal(null, LocalDateTime.of(2017, 12, 25, 9, 0), "test", 500);
         Meal fromDB = service.save(created, USER_ID);
         created.setId(fromDB.getId());
 
         MATCHER.assertCollectionEquals(
-                Arrays.asList(USER_MEAL_BREAKFAST, USER_MEAL_LANCH, USER_MEAL_DINNER, created),
+                Arrays.asList(USER_MEAL_DINNER, USER_MEAL_LANCH, USER_MEAL_BREAKFAST, created),
                 service.getAll(USER_ID));
     }
 

@@ -81,18 +81,18 @@ public class JdbcMealRepositoryImpl implements MealRepository {
     @Override
     public Meal get(int id, int userId) {
         return DataAccessUtils.singleResult(
-                jdbcTemplate.query("SELECT * FROM meals WHERE id=? AND user_id=?", ROW_MAPPER, id, userId));
+                jdbcTemplate.query("SELECT id, datetime, description, calories FROM meals WHERE id=? AND user_id=?", ROW_MAPPER, id, userId));
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        return jdbcTemplate.query("SELECT * FROM meals " +
+        return jdbcTemplate.query("SELECT id, datetime, description, calories FROM meals " +
                 "WHERE user_id=? ORDER BY datetime DESC", ROW_MAPPER, userId);
     }
 
     @Override
     public List<Meal> getBetween(LocalDateTime startDate, LocalDateTime endDate, int userId) {
-        return jdbcTemplate.query("SELECT * FROM meals " +
+        return jdbcTemplate.query("SELECT id, datetime, description, calories FROM meals " +
                         "WHERE user_id=? AND  datetime>=? AND datetime<=?  ORDER BY datetime DESC",
                 ROW_MAPPER, userId, startDate, endDate);
     }

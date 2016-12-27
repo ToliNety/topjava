@@ -19,7 +19,7 @@ public class Meal extends BaseEntity {
     }
 
     public Meal(Meal meal) {
-        this (meal.id, meal.getDateTime(), meal.getDescription(), meal.getCalories());
+        this(meal.id, meal.getDateTime(), meal.getDescription(), meal.getCalories());
     }
 
     public Meal(LocalDateTime dateTime, String description, int calories) {
@@ -69,6 +69,7 @@ public class Meal extends BaseEntity {
     public String toString() {
         return "Meal{" +
                 "id=" + id +
+                "dateTime=" + dateTime +
                 ", description='" + description + '\'' +
                 ", calories=" + calories +
                 '}';
