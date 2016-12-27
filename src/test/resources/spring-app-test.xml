@@ -7,11 +7,10 @@
 
     <context:annotation-config/>
 
+    <context:component-scan base-package="ru.javawebinar.**.mock"/>
+
     <context:component-scan base-package="ru.javawebinar.**.service"/>
 
     <context:component-scan base-package="ru.javawebinar.**.web"/>
-
-    <bean class="ru.javawebinar.topjava.repository.mock.InMemoryMealRepositoryImpl" id="mockMealRepository"/>
-    <bean class="ru.javawebinar.topjava.repository.mock.InMemoryUserRepositoryImpl" id="mockUserRepository"/>
 
 </beans>
