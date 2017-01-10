@@ -23,7 +23,7 @@ public class TimeChecker implements TestRule {
                 Date start = new Date();
                 statement.evaluate();
                 Date end = new Date();
-                LOG.info("time to this test: "+(end.getTime()-start.getTime()+"ms"));
+                LOG.info("time to this test: " + (end.getTime() - start.getTime() + "ms"));
             }
         };
     }
