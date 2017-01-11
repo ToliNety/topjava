@@ -29,9 +29,6 @@ import static ru.javawebinar.topjava.UserTestData.*;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class UserServiceTest {
     @Rule
-    public TimeChecker timeRule = new TimeChecker();
-
-    @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @Autowired

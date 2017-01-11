@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.repository.jpa;
 
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
@@ -44,31 +45,32 @@ public class JpaMealRepositoryImpl implements MealRepository {
     public boolean delete(int id, int userId) {
         return em.createNamedQuery(Meal.DELETE)
                 .setParameter("id", id)
-                .setParameter("user", em.getReference(User.class, userId))
+                .setParameter("userID", userId)
                 .executeUpdate() != 0;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        try {
-            return em.createNamedQuery(Meal.GET, Meal.class)
-                    .setParameter("id", id)
-                    .setParameter("user", em.getReference(User.class, userId))
-                    .getSingleResult();
-        } catch (NoResultException ex) {
-            return null;
-        }
+        return DataAccessUtils.singleResult(
+                em.createNamedQuery(Meal.GET, Meal.class)
+                        .setParameter("id", id)
+                        .setParameter("userID", userId)
+                        .getResultList()
+        );
     }
 
     @Override
     public List<Meal> getAll(int userId) {
         User user = em.getReference(User.class, userId);
-        return em.createNamedQuery(Meal.ALL_SORTED, Meal.class).setParameter("user", user).getResultList();
+        return em.createNamedQuery(Meal.ALL_SORTED, Meal.class)
+                .setParameter("userID", userId)
+                .getResultList();
     }
 
     @Override
     public List<Meal> getBetween(LocalDateTime startDate, LocalDateTime endDate, int userId) {
         return em.createNamedQuery(Meal.ALL_SORTED_BETWEEN, Meal.class)
+                .setParameter("userID", userId)
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
                 .getResultList();
