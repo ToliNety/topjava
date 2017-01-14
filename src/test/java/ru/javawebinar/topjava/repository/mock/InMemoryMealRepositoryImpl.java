@@ -1,6 +1,8 @@
 package ru.javawebinar.topjava.repository.mock;
 
 import org.springframework.stereotype.Repository;
+import ru.javawebinar.topjava.MealTestData;
+import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.DateTimeUtil;
@@ -26,6 +28,26 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     // Map  userId -> (mealId-> meal)
     private Map<Integer, Map<Integer, Meal>> repository = new ConcurrentHashMap<>();
     private AtomicInteger counter = new AtomicInteger(0);
+
+    //populate Data to repository
+    {
+        MealTestData.MEAL1.setId(null);
+        save(MealTestData.MEAL1, UserTestData.USER_ID);
+        MealTestData.MEAL2.setId(null);
+        save(MealTestData.MEAL2, UserTestData.USER_ID);
+        MealTestData.MEAL3.setId(null);
+        save(MealTestData.MEAL3, UserTestData.USER_ID);
+        MealTestData.MEAL4.setId(null);
+        save(MealTestData.MEAL4, UserTestData.USER_ID);
+        MealTestData.MEAL5.setId(null);
+        save(MealTestData.MEAL5, UserTestData.USER_ID);
+        MealTestData.MEAL6.setId(null);
+        save(MealTestData.MEAL6, UserTestData.USER_ID);
+        MealTestData.ADMIN_MEAL1.setId(null);
+        save(MealTestData.ADMIN_MEAL1, UserTestData.ADMIN_ID);
+        MealTestData.ADMIN_MEAL2.setId(null);
+        save(MealTestData.ADMIN_MEAL2, UserTestData.ADMIN_ID);
+    }
 
     @Override
     public Meal save(Meal meal, int userId) {
