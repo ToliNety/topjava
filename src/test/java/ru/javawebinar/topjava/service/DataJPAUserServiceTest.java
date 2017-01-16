@@ -5,11 +5,8 @@ import org.junit.Test;
 import org.springframework.test.context.ActiveProfiles;
 import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.Profiles;
-import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.stream.Collectors;
 
 import static ru.javawebinar.topjava.MealTestData.MEALS;
