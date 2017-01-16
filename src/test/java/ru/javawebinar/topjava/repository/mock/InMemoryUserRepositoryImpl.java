@@ -58,6 +58,11 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public User getWithMeals(int id) {
+        return get(id);
+    }
+
+    @Override
     public List<User> getAll() {
         return repository.values().stream()
                 .sorted(USER_COMPARATOR)

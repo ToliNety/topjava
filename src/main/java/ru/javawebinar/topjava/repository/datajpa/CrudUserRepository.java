@@ -29,6 +29,9 @@ public interface CrudUserRepository extends JpaRepository<User, Integer> {
     @Override
     User findOne(Integer id);
 
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.meals WHERE u.id=:id")
+    User getByIdWithMeals(@Param("id") int id);
+
     @Override
     List<User> findAll(Sort sort);
 
