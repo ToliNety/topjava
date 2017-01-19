@@ -38,7 +38,7 @@ public class DataJpaMealRepositoryImpl implements MealRepository {
     @Override
     public Meal get(int id, int userId) {
         Meal meal = crudRepository.findOne(id);
-        if (meal.getUser().getId() != userId) {
+        if (meal.getUser() != null && meal.getUser().getId() != userId) {
             return null;
         }
 
@@ -58,7 +58,7 @@ public class DataJpaMealRepositoryImpl implements MealRepository {
     @Override
     public List<Meal> getBetween(LocalDateTime startDate, LocalDateTime endDate, int userId) {
         return crudRepository.
-                findByUserAndDateTimeBetweenOrderByDateTimeDesc(
-                        crudUserRepository.findOne(userId), startDate, endDate);
+                findByUserIdAndDateTimeBetweenOrderByDateTimeDesc(
+                        userId, startDate, endDate);
     }
 }
