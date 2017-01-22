@@ -10,10 +10,7 @@ import org.hibernate.validator.constraints.Range;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * User: gkislin
@@ -127,6 +124,11 @@ public class User extends NamedEntity {
 
     public Set<Role> getRoles() {
         return roles;
+    }
+
+    public void addRole(Role role) {
+        if (roles == null) roles = new HashSet<>();
+        roles.add(role);
     }
 
     public String getPassword() {
