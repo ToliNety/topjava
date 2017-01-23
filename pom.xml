@@ -19,6 +19,7 @@
         <tomcat.version>8.5.5</tomcat.version>
         <spring.version>4.3.4.RELEASE</spring.version>
         <spring-data-jpa.version>1.10.6.RELEASE</spring-data-jpa.version>
+        <spring-data-jdbc-core.version>1.2.1.RELEASE</spring-data-jdbc-core.version>
 
         <!-- Logging -->
         <logback.version>1.1.7</logback.version>
@@ -164,6 +165,11 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
             <version>${spring-data-jpa.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jdbc-core</artifactId>
+            <version>${spring-data-jdbc-core.version}</version>
         </dependency>
 
         <dependency>

@@ -1,19 +1,16 @@
 package ru.javawebinar.topjava.repository.jdbc;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.data.jdbc.core.OneToManyResultSetExtractor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-import ru.javawebinar.topjava.model.NamedEntity;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
@@ -23,7 +20,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * User: gkislin
@@ -129,37 +125,29 @@ public class JdbcUserRepositoryImpl implements UserRepository {
                 "ORDER BY name, email", USER_EXTRACTOR);
     }
 
-    static class UserExtractor implements ResultSetExtractor<List<User>> {
+    static class UserExtractor extends OneToManyResultSetExtractor<User, Role, Integer> {
+        public UserExtractor() {
+            super(BeanPropertyRowMapper.newInstance(User.class),
+                    (rs, rowNum) -> Role.valueOf(rs.getString("role")));
+        }
+
         @Override
-        public List<User> extractData(ResultSet rs) throws SQLException, DataAccessException {
-            Map<Integer, User> userMap = new HashMap<>();
+        protected Integer mapPrimaryKey(ResultSet resultSet) throws SQLException {
+            return resultSet.getInt("id");
+        }
 
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                User user = userMap.get(id);
-                if (user == null) {
-                    user = new User(id,
-                            rs.getString("name"),
-                            rs.getString("email"),
-                            rs.getString("password"),
-                            rs.getInt("calories_per_day"),
-                            rs.getBoolean("enabled"),
-                            null);
-                    user.setRegistered(rs.getDate("registered"));
-                    userMap.put(id, user);
-                }
-
-                String roleStr = rs.getString("role");
-                if (roleStr != null && !roleStr.isEmpty())
-                    user.addRole(Role.valueOf(rs.getString("role")));
-
+        @Override
+        protected Integer mapForeignKey(ResultSet resultSet) throws SQLException {
+            if (resultSet.getObject("user_id") == null) {
+                return null;
+            } else {
+                return resultSet.getInt("user_id");
             }
+        }
 
-            Comparator<User> byName = Comparator.comparing(NamedEntity::getName);
-            Comparator<User> byEmail = Comparator.comparing(User::getEmail);
-            return userMap.values().stream()
-                    .sorted(byName.thenComparing(byEmail))
-                    .collect(Collectors.toList());
+        @Override
+        protected void addChild(User user, Role role) {
+            user.addRole(role);
         }
     }
 }
