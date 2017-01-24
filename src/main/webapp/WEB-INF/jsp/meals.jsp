@@ -27,10 +27,10 @@
             <dt><fmt:message key="meals.toTime"/></dt>
             <dd><input type="time" name="endTime" value="${param.endTime}"></dd>
         </dl>
-        <button type="submit">Filter</button>
+        <button type="submit"><fmt:message key="common.filter"/></button>
     </form>
     <hr>
-    <a href="meal"><fmt:message key="meals.add"/></a>
+    <a href="meals/0"><fmt:message key="meals.add"/></a>
     <hr>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
@@ -52,8 +52,8 @@
                 </td>
                 <td>${meal.description}</td>
                 <td>${meal.calories}</td>
-                <td><a href="meal?id=${meal.id}"><fmt:message key="common.update"/></a></td>
-                <td><a href="mealDelete?id=${meal.id}"><fmt:message key="common.delete"/></a></td>
+                <td><a href="meals/${meal.id}"><fmt:message key="common.update"/></a></td>
+                <td><a href="meals/delete/${meal.id}"><fmt:message key="common.delete"/></a></td>
             </tr>
         </c:forEach>
     </table>
