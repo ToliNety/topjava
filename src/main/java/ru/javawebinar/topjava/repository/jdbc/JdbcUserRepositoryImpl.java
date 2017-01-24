@@ -147,7 +147,7 @@ public class JdbcUserRepositoryImpl implements UserRepository {
 
         @Override
         protected void addChild(User user, Role role) {
-            user.addRole(role);
+            user.setRoles(role);
         }
     }
 }

@@ -126,7 +126,7 @@ public class User extends NamedEntity {
         return roles;
     }
 
-    public void addRole(Role role) {
+    public void setRoles(Role role) {
         if (roles == null) roles = new HashSet<>();
         roles.add(role);
     }
