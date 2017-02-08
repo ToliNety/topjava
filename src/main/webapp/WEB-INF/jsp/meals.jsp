@@ -60,10 +60,10 @@
                             </td>
                             <td>${meal.description}</td>
                             <td>${meal.calories}</td>
-                            <td><a class="btn btn-xs btn-primary edit" id="${meal.id}">
+                            <td><a class="btn btn-xs btn-primary edit">
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                             </a></td>
-                            <td><a class="btn btn-xs btn-danger delete" id="${meal.id}">
+                            <td><a class="btn btn-xs btn-danger delete" onclick="deleteRow(${meal.id})">
                                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                             </a></td>
                         </tr>
