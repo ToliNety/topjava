@@ -1,6 +1,7 @@
 var ajaxUrl = 'ajax/meals/';
 var datatableApi;
-
+var dates;
+var times;
 // $(document).ready(function () {
 $(function () {
     datatableApi = $('#datatable').DataTable({
@@ -31,6 +32,14 @@ $(function () {
                 "asc"
             ]
         ]
+    });
+    dates= $('#startDate, #endDate').datetimepicker({
+        timepicker:false,
+        format:'Y-m-d'
+    });
+    times= $('#startTime, #endTime').datetimepicker({
+        datepicker:false,
+        format:'H:i'
     });
     makeEditable();
 });

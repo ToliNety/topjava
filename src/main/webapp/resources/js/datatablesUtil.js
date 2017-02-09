@@ -4,6 +4,11 @@ function makeEditable() {
         return false;
     });
 
+    $('#filterForm').submit(function () {
+        updateTable();
+        return false;
+    });
+
     $(document).ajaxError(function (event, jqXHR, options, jsExc) {
         failNoty(event, jqXHR, options, jsExc);
     });
@@ -12,6 +17,20 @@ function makeEditable() {
 function add() {
     $('#id').val(null);
     $('#editRow').modal();
+}
+
+function resetForm() {
+    dates.datetimepicker('reset');
+    times.datetimepicker('reset');
+    updateTable();
+}
+
+function getFormValues() {
+    var values = {};
+    $('#filterForm').find(':input').each(function () {
+        values[this.name] = $(this).val();
+    });
+    return values;
 }
 
 function deleteRow(id) {
@@ -26,13 +45,21 @@ function deleteRow(id) {
 }
 
 function updateTable() {
-    $.get(ajaxUrl, function (data) {
-        datatableApi.clear();
-        $.each(data, function (key, item) {
-            datatableApi.row.add(item);
+    var values = getFormValues();
+
+    $.get(ajaxUrl + "filter", {
+            startDate: values['startDate'],
+            startTime: values['startTime'],
+            endDate: values['endDate'],
+            endTime: values['endTime']
+        },
+        function (data) {
+            datatableApi.clear();
+            $.each(data, function (key, item) {
+                datatableApi.row.add(item);
+            });
+            datatableApi.draw();
         });
-        datatableApi.draw();
-    });
 }
 
 function save() {

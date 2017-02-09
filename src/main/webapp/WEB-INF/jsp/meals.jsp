@@ -16,24 +16,25 @@
             <h3><spring:message code="meals.title"/></h3>
 
             <div class="view-box">
-                <form method="post" action="meals/filter">
+                <form method="post" id="filterForm">
                     <dl>
                         <dt><spring:message code="meals.startDate"/>:</dt>
-                        <dd><input type="date" name="startDate" value="${param.startDate}"></dd>
+                        <dd><input type="text" name="startDate" id="startDate" value="${param.startDate}"></dd>
                     </dl>
                     <dl>
                         <dt><spring:message code="meals.endDate"/>:</dt>
-                        <dd><input type="date" name="endDate" value="${param.endDate}"></dd>
+                        <dd><input type="text" name="endDate" id="endDate" value="${param.endDate}"></dd>
                     </dl>
                     <dl>
                         <dt><spring:message code="meals.startTime"/>:</dt>
-                        <dd><input type="time" name="startTime" value="${param.startTime}"></dd>
+                        <dd><input type="text" name="startTime" id="startTime" value="${param.startTime}"></dd>
                     </dl>
                     <dl>
                         <dt><spring:message code="meals.endTime"/>:</dt>
-                        <dd><input type="time" name="endTime" value="${param.endTime}"></dd>
+                        <dd><input type="text" name="endTime" id="endTime" value="${param.endTime}"></dd>
                     </dl>
                     <button type="submit"><spring:message code="meals.filter"/></button>
+                    <button type="reset" onclick="resetForm()">Reset</button>
                 </form>
 
                 <a class="btn btn-sm btn-info" onclick="add()">
