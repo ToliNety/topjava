@@ -1,7 +1,6 @@
 var ajaxUrl = "ajax/profile/meals/";
 var datatableApi;
 
-
 // $(document).ready(function () {
 function clearFilter() {
     $("#filter")[0].reset();
@@ -27,13 +26,7 @@ $(function () {
         "info": true,
         "columns": [
             {
-                "data": "dateTime",
-                "render": function (date, type, row) {
-                    if (type == 'display') {
-                        return '<span>' + date.substring(0, 10) + ' ' + date.substring(11, 16) + '</span>';
-                    }
-                    return date;
-                }
+                "data": "dateTime"
             },
             {
                 "data": "description"
@@ -44,12 +37,12 @@ $(function () {
             {
                 "defaultContent": "",
                 "orderable": false,
-                "render" : renderEditBtn
+                "render": renderEditBtn
             },
             {
                 "defaultContent": "",
                 "orderable": false,
-                "render" : renderDeleteBtn
+                "render": renderDeleteBtn
             }
         ],
         "order": [
@@ -67,4 +60,19 @@ $(function () {
         },
         "initComplete": makeEditable
     });
+    addDateTimePicker();
 });
+
+function addDateTimePicker() {
+    $('#startDate, #endDate').datetimepicker({
+        timepicker: false,
+        format: 'Y-m-d'
+    });
+    $('#startTime, #endTime').datetimepicker({
+        datepicker: false,
+        format: 'H:i'
+    });
+    $('#dateTime').datetimepicker({
+        format: 'Y-m-d H:i'
+    });
+}
