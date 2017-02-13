@@ -7,8 +7,8 @@ function makeEditable() {
     });
 }
 
-function add(title) {
-    $('#modalTitle').html(title);
+function add() {
+    $('#modalTitle').html(addTitle);
     // form.find(":input").val("");
     // form.trigger('reset');
     form[0].reset();
@@ -90,7 +90,7 @@ function renderEditBtn(data, type, row) {
 
 function renderDeleteBtn(data, type, row) {
     if (type == 'display') {
-        return '<a class="btn btn-xs btn-danger" onclick="deleteRow(' + row.id + ');">'+
+        return '<a class="btn btn-xs btn-danger" onclick="deleteRow(' + row.id + ');">' +
             '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>';
     }
 }
