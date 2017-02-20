@@ -29,7 +29,7 @@ public class AdminRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN)))
                 .andExpect(status().isOk())
                 .andDo(print())
-        // https://jira.spring.io/browse/SPR-14472
+                // https://jira.spring.io/browse/SPR-14472
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MATCHER.contentMatcher(ADMIN));
     }
@@ -96,6 +96,18 @@ public class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    public void testValidationUpdate() throws Exception {
+        User updated = new User(USER);
+        updated.setEmail("");
+        mockMvc.perform(put(REST_URL + USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(updated)))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
+
+    @Test
     public void testCreate() throws Exception {
         User expected = new User(null, "New", "new@gmail.com", "newPass", 2300, Role.ROLE_USER, Role.ROLE_ADMIN);
         ResultActions action = mockMvc.perform(post(REST_URL)
@@ -108,6 +120,17 @@ public class AdminRestControllerTest extends AbstractControllerTest {
 
         MATCHER.assertEquals(expected, returned);
         MATCHER.assertCollectionEquals(Arrays.asList(ADMIN, expected, USER), userService.getAll());
+    }
+
+    @Test
+    public void testValidationCreate() throws Exception {
+        User expected = new User(null, "New", "", "", 2300, Role.ROLE_USER, Role.ROLE_ADMIN);
+        mockMvc.perform(post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(expected)))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
     }
 
     @Test

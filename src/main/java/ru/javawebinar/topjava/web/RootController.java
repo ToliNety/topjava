@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.web;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -14,6 +15,8 @@ import ru.javawebinar.topjava.web.user.AbstractUserController;
 
 import javax.validation.Valid;
 
+import static ru.javawebinar.topjava.util.ValidationUtil.checkEmailConstraintEx;
+
 /**
  * User: gkislin
  * Date: 22.08.2014
@@ -26,7 +29,7 @@ public class RootController extends AbstractUserController {
         return "redirect:meals";
     }
 
-//    @Secured("ROLE_ADMIN")
+    //    @Secured("ROLE_ADMIN")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/users")
     public String users() {
@@ -49,14 +52,23 @@ public class RootController extends AbstractUserController {
     }
 
     @PostMapping("/profile")
-    public String updateProfile(@Valid UserTo userTo, BindingResult result, SessionStatus status) {
+    public String updateProfile(@Valid UserTo userTo, BindingResult result, SessionStatus status) throws Exception {
         if (result.hasErrors()) {
             return "profile";
         } else {
-            super.update(userTo);
-            AuthorizedUser.get().update(userTo);
-            status.setComplete();
-            return "redirect:meals";
+            try {
+                super.update(userTo);
+                AuthorizedUser.get().update(userTo);
+                status.setComplete();
+                return "redirect:meals";
+            } catch (DataIntegrityViolationException ex) {
+                String msg = checkEmailConstraintEx(ex);
+                if (msg != null) {
+                    result.rejectValue("email", "", msg);
+                    return "profile";
+                } else throw new Exception(ex);
+            }
+
         }
     }
 
@@ -68,14 +80,22 @@ public class RootController extends AbstractUserController {
     }
 
     @PostMapping("/register")
-    public String saveRegister(@Valid UserTo userTo, BindingResult result, SessionStatus status, ModelMap model) {
+    public String saveRegister(@Valid UserTo userTo, BindingResult result, SessionStatus status, ModelMap model) throws Exception {
         if (result.hasErrors()) {
             model.addAttribute("register", true);
             return "profile";
         } else {
-            super.create(UserUtil.createNewFromTo(userTo));
-            status.setComplete();
-            return "redirect:login?message=app.registered&username=" + userTo.getEmail();
+            try {
+                super.create(UserUtil.createNewFromTo(userTo));
+                status.setComplete();
+                return "redirect:login?message=app.registered&username=" + userTo.getEmail();
+            } catch (DataIntegrityViolationException ex) {
+                String msg = checkEmailConstraintEx(ex);
+                if (msg != null) {
+                    result.rejectValue("email", "", msg);
+                    return "profile";
+                } else throw new Exception(ex);
+            }
         }
     }
 }

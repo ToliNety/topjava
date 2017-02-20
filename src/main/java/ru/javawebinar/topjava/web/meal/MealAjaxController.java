@@ -1,18 +1,18 @@
 package ru.javawebinar.topjava.web.meal;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealWithExceed;
-import ru.javawebinar.topjava.util.ValidationUtil;
 
 import javax.validation.Valid;
+import javax.xml.bind.ValidationException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+
+import static ru.javawebinar.topjava.util.ValidationUtil.getBindingResultDetails;
 
 /**
  * gkislin
@@ -41,17 +41,15 @@ public class MealAjaxController extends AbstractMealController {
     }
 
     @PostMapping
-    public ResponseEntity<String> updateOrCreate(@Valid Meal meal, BindingResult result) {
-        // TODO change to exception handler
+    public void updateOrCreate(@Valid Meal meal, BindingResult result) throws ValidationException {
         if (result.hasErrors()) {
-            return ValidationUtil.getErrorResponse(result);
+            throw new ValidationException(getBindingResultDetails(result));
         }
         if (meal.isNew()) {
             super.create(meal);
         } else {
             super.update(meal, meal.getId());
         }
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override

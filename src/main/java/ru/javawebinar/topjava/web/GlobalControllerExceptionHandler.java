@@ -23,6 +23,11 @@ public class GlobalControllerExceptionHandler {
     @Order(Ordered.LOWEST_PRECEDENCE)
     ModelAndView defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
         LOG.error("Exception at request " + req.getRequestURL(), e);
+
+        return createModelAndView(e);
+    }
+
+    private ModelAndView createModelAndView(Exception e) {
         ModelAndView mav = new ModelAndView("exception/exception");
         mav.addObject("exception", e);
 
@@ -31,6 +36,7 @@ public class GlobalControllerExceptionHandler {
         if (authorizedUser != null) {
             mav.addObject("userTo", authorizedUser.getUserTo());
         }
+
         return mav;
     }
 }

@@ -1,5 +1,7 @@
 package ru.javawebinar.topjava.util;
 
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -48,8 +50,23 @@ public class ValidationUtil {
     }
 
     public static ResponseEntity<String> getErrorResponse(BindingResult result) {
+        return new ResponseEntity<>(getBindingResultDetails(result), HttpStatus.BAD_REQUEST);
+    }
+
+    public static String getBindingResultDetails(BindingResult result) {
         StringBuilder sb = new StringBuilder();
         result.getFieldErrors().forEach(fe -> sb.append(fe.getField()).append(" ").append(fe.getDefaultMessage()).append("<br>"));
-        return new ResponseEntity<>(sb.toString(), HttpStatus.UNPROCESSABLE_ENTITY);
+        return sb.toString();
+    }
+
+    public static String checkEmailConstraintEx(DataIntegrityViolationException e) {
+        Throwable cause = e.getCause();
+        if (cause != null && cause instanceof ConstraintViolationException) {
+            String sqlMessage = ((ConstraintViolationException) cause).getSQLException().getMessage();
+            if (sqlMessage.contains("users_unique_email_idx")) {
+                return "User with this email already present in application";
+            }
+        }
+        return null;
     }
 }

@@ -6,11 +6,16 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import ru.javawebinar.topjava.util.ValidationUtil;
 import ru.javawebinar.topjava.util.exception.ErrorInfo;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ValidationException;
+
+import static ru.javawebinar.topjava.util.ValidationUtil.checkEmailConstraintEx;
 
 /**
  * User: gkislin
@@ -20,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 public class ExceptionInfoHandler {
     Logger LOG = LoggerFactory.getLogger(ExceptionInfoHandler.class);
 
-//  http://stackoverflow.com/a/22358422/548473
+    //  http://stackoverflow.com/a/22358422/548473
     @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(NotFoundException.class)
     @ResponseBody
@@ -34,7 +39,29 @@ public class ExceptionInfoHandler {
     @ResponseBody
     @Order(Ordered.HIGHEST_PRECEDENCE + 1)
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
+        String msg = checkEmailConstraintEx(e);
+        if (msg != null) {
+            e = new DataIntegrityViolationException(msg);
+        }
         return logAndGetErrorInfo(req, e, true);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ValidationException.class)
+    @ResponseBody
+    @Order(Ordered.HIGHEST_PRECEDENCE + 2)
+    public ErrorInfo handleValidationEx(HttpServletRequest req, ValidationException e) {
+        return logAndGetErrorInfo(req, e, true);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseBody
+    @Order(Ordered.HIGHEST_PRECEDENCE + 3)
+    public ErrorInfo handleMethodArgumentNotValidException(HttpServletRequest req, MethodArgumentNotValidException e) {
+        //return ValidationUtil.getErrorResponse(e.getBindingResult());
+        return logAndGetErrorInfo(req,
+                new ValidationException(ValidationUtil.getBindingResultDetails(e.getBindingResult())), true);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
