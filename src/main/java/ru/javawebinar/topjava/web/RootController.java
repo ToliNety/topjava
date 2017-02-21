@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.web;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -11,11 +10,10 @@ import org.springframework.web.bind.support.SessionStatus;
 import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.util.UserUtil;
+import ru.javawebinar.topjava.util.exception.ActionRunner;
 import ru.javawebinar.topjava.web.user.AbstractUserController;
 
 import javax.validation.Valid;
-
-import static ru.javawebinar.topjava.util.ValidationUtil.checkEmailConstraintEx;
 
 /**
  * User: gkislin
@@ -23,6 +21,7 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkEmailConstraintEx;
  */
 @Controller
 public class RootController extends AbstractUserController {
+    private static final String PROFILE_VIEW = "profile";
 
     @GetMapping("/")
     public String root() {
@@ -48,27 +47,20 @@ public class RootController extends AbstractUserController {
 
     @GetMapping("/profile")
     public String profile() {
-        return "profile";
+        return PROFILE_VIEW;
     }
 
     @PostMapping("/profile")
     public String updateProfile(@Valid UserTo userTo, BindingResult result, SessionStatus status) throws Exception {
         if (result.hasErrors()) {
-            return "profile";
+            return PROFILE_VIEW;
         } else {
-            try {
-                super.update(userTo);
+            return new ActionRunner().handleException(result, PROFILE_VIEW, () -> {
+                update(userTo);
                 AuthorizedUser.get().update(userTo);
                 status.setComplete();
                 return "redirect:meals";
-            } catch (DataIntegrityViolationException ex) {
-                String msg = checkEmailConstraintEx(ex);
-                if (msg != null) {
-                    result.rejectValue("email", "", msg);
-                    return "profile";
-                } else throw new Exception(ex);
-            }
-
+            });
         }
     }
 
@@ -76,26 +68,20 @@ public class RootController extends AbstractUserController {
     public String register(ModelMap model) {
         model.addAttribute("userTo", new UserTo());
         model.addAttribute("register", true);
-        return "profile";
+        return PROFILE_VIEW;
     }
 
     @PostMapping("/register")
     public String saveRegister(@Valid UserTo userTo, BindingResult result, SessionStatus status, ModelMap model) throws Exception {
         if (result.hasErrors()) {
             model.addAttribute("register", true);
-            return "profile";
+            return PROFILE_VIEW;
         } else {
-            try {
-                super.create(UserUtil.createNewFromTo(userTo));
+            return new ActionRunner().handleException(result, PROFILE_VIEW, () -> {
+                create(UserUtil.createNewFromTo(userTo));
                 status.setComplete();
                 return "redirect:login?message=app.registered&username=" + userTo.getEmail();
-            } catch (DataIntegrityViolationException ex) {
-                String msg = checkEmailConstraintEx(ex);
-                if (msg != null) {
-                    result.rejectValue("email", "", msg);
-                    return "profile";
-                } else throw new Exception(ex);
-            }
+            });
         }
     }
 }
