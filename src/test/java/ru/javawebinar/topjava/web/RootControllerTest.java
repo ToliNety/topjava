@@ -14,7 +14,7 @@ import static ru.javawebinar.topjava.UserTestData.USER;
  * 10.04.2015.
  */
 
-public class RootControllerTest extends AbstractControllerTest {
+public class RootControllerTest extends TransactionalAbstractControllerTest {
 
     @Test
     public void testUsers() throws Exception {

@@ -4,11 +4,13 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
+import ru.javawebinar.topjava.web.TransactionalAbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import java.util.Arrays;
@@ -55,6 +57,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @Transactional
     public void testDeleteNotFound() throws Exception {
         mockMvc.perform(delete(REST_URL + ADMIN_MEAL_ID)
                 .with(userHttpBasic(USER)))
@@ -63,6 +66,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @Transactional
     public void testDelete() throws Exception {
         mockMvc.perform(delete(REST_URL + MEAL1_ID)
                 .with(userHttpBasic(USER)))
@@ -71,6 +75,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @Transactional
     public void testUpdate() throws Exception {
         Meal updated = getUpdated();
 
@@ -84,6 +89,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @Transactional
     public void testValidationUpdate() throws Exception {
         Meal updated = getUpdated();
         updated.setCalories(0);
@@ -96,6 +102,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @Transactional
     public void testCreate() throws Exception {
         Meal created = getCreated();
         ResultActions action = mockMvc.perform(post(REST_URL)
@@ -111,9 +118,22 @@ public class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @Transactional
     public void testValidationCreate() throws Exception {
         Meal created = getCreated();
         created.setDescription("");
+        mockMvc.perform(post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(created))
+                .with(userHttpBasic(ADMIN)))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
+
+    @Test
+    public void testDuplicated() throws Exception {
+        Meal created = getCreated();
+        created.setDateTime(ADMIN_MEAL1.getDateTime());
         mockMvc.perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(created))

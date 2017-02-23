@@ -59,12 +59,14 @@ public class ValidationUtil {
         return sb.toString();
     }
 
-    public static String checkEmailConstraintEx(DataIntegrityViolationException e) {
+    public static String checkConstraintEx(DataIntegrityViolationException e) {
         Throwable cause = e.getCause();
         if (cause != null && cause instanceof ConstraintViolationException) {
             String sqlMessage = ((ConstraintViolationException) cause).getSQLException().getMessage();
             if (sqlMessage.contains("users_unique_email_idx")) {
                 return "User with this email already present in application";
+            } else if (sqlMessage.contains("meals_unique_user_datetime_idx")) {
+                return "Your meal with this date and time already present in application";
             }
         }
         return null;

@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * GKislin
  * 10.04.2015.
  */
-public class ResourceControllerTest extends AbstractControllerTest {
+public class ResourceControllerTest extends TransactionalAbstractControllerTest {
 
     @Test
     public void testResources() throws Exception {

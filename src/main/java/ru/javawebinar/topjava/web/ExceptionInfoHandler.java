@@ -15,7 +15,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
 
-import static ru.javawebinar.topjava.util.ValidationUtil.checkEmailConstraintEx;
+import static ru.javawebinar.topjava.util.ValidationUtil.checkConstraintEx;
 
 /**
  * User: gkislin
@@ -34,12 +34,12 @@ public class ExceptionInfoHandler {
         return logAndGetErrorInfo(req, e, false);
     }
 
-    @ResponseStatus(value = HttpStatus.CONFLICT)  // 409
+    @ResponseStatus(HttpStatus.BAD_REQUEST)  // 400
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseBody
     @Order(Ordered.HIGHEST_PRECEDENCE + 1)
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
-        String msg = checkEmailConstraintEx(e);
+        String msg = checkConstraintEx(e);
         if (msg != null) {
             e = new DataIntegrityViolationException(msg);
         }
